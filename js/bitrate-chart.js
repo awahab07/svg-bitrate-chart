@@ -1,7 +1,7 @@
 (function($){
-	$('#svg-chart').svg({onLoad: drawChart});
+	var reading = [0, 1, 0, 3, 4, 5];
 
-	var reading = [0, 1, 0, 5, 4, 3];
+	$('#svg-chart').svg({onLoad: drawChart});
 
 	function drawChart(svg) {
 		var width = 600,
@@ -12,12 +12,26 @@
 			stepWidth = width / nCols,
 			gapHeight = (height - (nLevels * lineSize)) / (nLevels - 1);
 
-		svg.circle(130, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
+		//svg.circle(130, 75, 50, {fill: 'none', stroke: 'red', strokeWidth: 3});
 		
-		for(var i=0; i<nCols; i++) {
-			for(var j=0; j<nLevels; j++) {
+		// Box border
+		svg.rect(null, 0, 0, width, height, {fill: 'none', stroke: 'red'});
 
-			}
-		}
+		
+		reading.reduceRight(function(preVal, currVal, index, arr) {
+			//  Vertical Line
+			var rIndex = reading.length - index - 1,
+				i = nCols - rIndex,
+				x = width - (rIndex * stepWidth),
+				w = lineSize,
+				y = preVal * gapHeight,
+				h = Math.abs(currVal - preVal) * gapHeight;
+			
+			console.log(i, stepWidth, x, y, w, h);
+			
+			svg.rect(null, x, y, w, h);
+
+			return currVal;
+		}, reading[reading.length - 1]);
 	}
 }(jQuery));
